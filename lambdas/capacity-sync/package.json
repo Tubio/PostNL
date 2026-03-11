@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8",
+    "@types/jest": "^29",
     "@types/node": "^20",
     "aws-sdk-client-mock": "^4",
     "jest": "^29",

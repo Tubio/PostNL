@@ -14,6 +14,6 @@ export interface DepotCapacityRecord {
   SK: string;
   depotId: string;
   capacity: number;
-  DepotCapacityType: DepotCapacityType;
+  depotCapacityType: DepotCapacityType;
   updatedAt: string;
 }

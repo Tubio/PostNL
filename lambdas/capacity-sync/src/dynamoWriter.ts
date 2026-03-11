@@ -1,39 +1,28 @@
-import { DynamoDBClient, BatchWriteItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { DepotCapacityRow, DepotCapacityRecord, DepotCapacityType } from "./types";
 
 const dynamo = new DynamoDBClient({});
 
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
-  );
-}
-
 export async function storeDepots(
   rows: DepotCapacityRow[],
-  excelType: DepotCapacityType,
-  date: string
+  depotCapacityType: DepotCapacityType,
+  depotCapacityDate: string
 ): Promise<void> {
-  const chunks = chunkArray(rows, 25);
-
-  for (const chunk of chunks) {
-    const records: DepotCapacityRecord[] = chunk.map((row) => ({
+  for (const row of rows) {
+    const record: DepotCapacityRecord = {
       PK: `DEPOT#${row.depotId}`,
-      SK: `${date}#${excelType}`,
+      SK: `${depotCapacityDate}#${depotCapacityType}`,
       depotId: row.depotId,
       capacity: row.capacity,
-      DepotCapacityType: excelType,
-      updatedAt: date,
-    }));
+      depotCapacityType: depotCapacityType,
+      updatedAt: new Date().toISOString(),
+    };
 
     await dynamo.send(
-      new BatchWriteItemCommand({
-        RequestItems: {
-          [process.env.TABLE_NAME!]: records.map((record) => ({
-            PutRequest: { Item: marshall(record) },
-          })),
-        },
+      new PutItemCommand({
+        TableName: process.env.TABLE_NAME!,
+        Item: marshall(record),
       })
     );
   }
