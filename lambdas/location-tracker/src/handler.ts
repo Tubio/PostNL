@@ -19,7 +19,7 @@ async function processEvent(event: LocationEvent): Promise<void> {
   await dynamo.send(
     new UpdateItemCommand({
       TableName: process.env.TABLE_NAME!,
-      Key: marshall({ PK: `RC#${event.containerId}` }),
+      Key: marshall({ PK: `RC#${event.containerId}`, SK: "#STATE" }),
       UpdateExpression:
         "SET #loc = :loc, iotUpdatedAt = :ts, #ttl = :ttl, #status = if_not_exists(#status, :unknown)",
       ExpressionAttributeNames: {
@@ -41,7 +41,6 @@ export const handler = async (event: KinesisStreamEvent): Promise<void> => {
   const results = await Promise.allSettled(
     event.Records.map((record) => processEvent(parseEvent(record.kinesis.data)))
   );
-
   const failures = results.filter((r) => r.status === "rejected");
   if (failures.length > 0) {
     throw new Error(`Batch processing failed: ${failures.length} errors`);
