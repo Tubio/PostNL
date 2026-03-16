@@ -1,0 +1,53 @@
+type DepotCapacity {
+  depotId: String!
+  capacity: Int!
+  excelType: String!
+  updatedAt: AWSDateTime!
+}
+
+type ContainerStock {
+  depotId: String!
+  containersInTransit: Int!
+  containersEmpty: Int!
+  containersUnknown: Int!
+  asOf: AWSDateTime!
+}
+
+type StockLevel {
+  depotId: String!
+  capacity: DepotCapacity
+  stock: ContainerStock
+}
+
+type ForecastInterval {
+  depotId: String!
+  intervalStart: AWSDateTime!
+  expectedParcels: Int!
+  generatedAt: AWSDateTime!
+}
+
+input ForecastIntervalInput {
+  depotId: String!
+  intervalStart: AWSDateTime!
+  expectedParcels: Int!
+}
+
+input PublishForecastInput {
+  generatedAt: AWSDateTime!
+  intervals: [ForecastIntervalInput!]!
+}
+
+type Query {
+  getCapacity(depotId: String!, date: String!): DepotCapacity
+  getAllCapacities(date: String!): [DepotCapacity!]!
+
+  getDepotAvailability(depotId: String!): StockLevel!
+  getAllDepotAvailabilities: [StockLevel!]!
+
+  getForecast(depotId: String!, date: String!): [ForecastInterval!]!
+  getAllForecastsForDate(date: String!): [ForecastInterval!]!
+}
+
+type Mutation {
+  publishForecast(input: PublishForecastInput!): Boolean!
+}
