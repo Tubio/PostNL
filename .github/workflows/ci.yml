@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    name: Lint, Type Check & Test
+    name: Type Check & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -20,29 +20,13 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: |
-            lambdas/capacity-sync/package-lock.json
-            lambdas/location-tracker/package-lock.json
-            lambdas/stock-tracker/package-lock.json
-            lambdas/stock-level-resolver/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: |
-          npm ci --prefix lambdas/capacity-sync
-          npm ci --prefix lambdas/location-tracker
-          npm ci --prefix lambdas/stock-tracker
-          npm ci --prefix lambdas/stock-level-resolver
+        run: npm ci
 
       - name: Type check
-        run: |
-          npm run --prefix lambdas/capacity-sync tsc -- --noEmit
-          npm run --prefix lambdas/location-tracker tsc -- --noEmit
-          npm run --prefix lambdas/stock-tracker tsc -- --noEmit
-          npm run --prefix lambdas/stock-level-resolver tsc -- --noEmit
+        run: npx tsc --noEmit
 
       - name: Test
-        run: |
-          npm test --prefix lambdas/capacity-sync
-          npm test --prefix lambdas/location-tracker
-          npm test --prefix lambdas/stock-tracker
-          npm test --prefix lambdas/stock-level-resolver
+        run: npm test --workspaces --if-present
