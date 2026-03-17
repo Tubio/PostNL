@@ -20,7 +20,7 @@ jobs:
     env:
       ENV: ${{ github.ref_name == 'main' && 'main' || 'dev' }}
       STACK_NAME: postnl-dks-${{ github.ref_name == 'main' && 'main' || 'dev' }}
-      S3_BUCKET: postnl-dks-${{ github.ref_name == 'main' && 'main' || 'dev' }}-artifacts
+      S3_BUCKET: postnl-dks-demo-${{ github.ref_name == 'main' && 'main' || 'dev' }}-artifacts
 
     steps:
       - name: Checkout
