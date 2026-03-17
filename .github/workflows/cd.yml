@@ -52,8 +52,11 @@ jobs:
         run: aws s3 sync appsync/ s3://${{ env.S3_BUCKET }}/appsync/
 
       - name: SAM build
-        run: sam build
-
+        run: |
+          npm install -g esbuild
+          export PATH="$(npm root -g)/.bin:$PATH"
+          sam build
+          
       - name: SAM deploy
         run: |
           sam deploy \
