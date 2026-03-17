@@ -8,19 +8,19 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    name: Deploy to ${{ github.ref_name == 'main' && 'main' || 'dev' }}
     runs-on: ubuntu-latest
 
-    environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    environment: ${{ github.ref_name == 'main' && 'main' || 'dev' }}
 
     permissions:
       id-token: write
       contents: read
 
     env:
-      ENV: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
-      STACK_NAME: postnl-dks-${{ github.ref_name == 'main' && 'prod' || 'dev' }}
-      S3_BUCKET: postnl-dks-${{ github.ref_name == 'main' && 'prod' || 'dev' }}-artifacts
+      ENV: ${{ github.ref_name == 'main' && 'main' || 'dev' }}
+      STACK_NAME: postnl-dks-${{ github.ref_name == 'main' && 'main' || 'dev' }}
+      S3_BUCKET: postnl-dks-${{ github.ref_name == 'main' && 'main' || 'dev' }}-artifacts
 
     steps:
       - name: Checkout
