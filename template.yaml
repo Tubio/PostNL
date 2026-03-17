@@ -70,9 +70,16 @@ Resources:
 
   CapacitySyncFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        EntryPoints:
+          - src/handler.ts
     Properties:
       FunctionName: !Sub "postnl-dks-${AWS::StackName}-capacity-sync"
-      Handler: dist/handler.handler
+      Handler: handler.handler
       CodeUri: lambdas/capacity-sync/
       Description: Fetches capacity Excels from OneDrive and stores them in DynamoDB
       Environment:
@@ -100,9 +107,16 @@ Resources:
 
   LocationTrackerFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        EntryPoints:
+          - src/handler.ts
     Properties:
       FunctionName: !Sub "postnl-dks-${AWS::StackName}-location-tracker"
-      Handler: dist/handler.handler
+      Handler: handler.handler
       CodeUri: lambdas/location-tracker/
       Description: Processes IoT location events and updates container state
       Policies:
@@ -119,9 +133,16 @@ Resources:
 
   StockTrackerFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        EntryPoints:
+          - src/handler.ts
     Properties:
       FunctionName: !Sub "postnl-dks-${AWS::StackName}-stock-tracker"
-      Handler: dist/handler.handler
+      Handler: handler.handler
       CodeUri: lambdas/stock-tracker/
       Description: Processes scanning events and updates container status and destination
       Policies:
@@ -138,14 +159,29 @@ Resources:
 
   StockLevelResolverFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: false
+        Target: es2020
+        EntryPoints:
+          - src/handler.ts
     Properties:
       FunctionName: !Sub "postnl-dks-${AWS::StackName}-stock-level-resolver"
-      Handler: dist/handler.handler
+      Handler: handler.handler
       CodeUri: lambdas/stock-level-resolver/
       Description: Aggregates container stock levels per depot for AppSync
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref MainTable
+
+  StockLevelResolverInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt StockLevelResolverFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: appsync.amazonaws.com
+      SourceArn: !GetAtt GraphQLApi.Arn
 
   GraphQLApi:
     Type: AWS::AppSync::GraphQLApi
@@ -365,11 +401,3 @@ Outputs:
 
   FrontendUserPoolClientId:
     Value: !Ref FrontendUserPoolClient
-
-  StockLevelResolverInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt StockLevelResolverFunction.Arn
-      Action: lambda:InvokeFunction
-      Principal: appsync.amazonaws.com
-      SourceArn: !GetAtt GraphQLApi.Arn
