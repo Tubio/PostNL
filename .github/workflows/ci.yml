@@ -26,7 +26,11 @@ jobs:
         run: npm ci
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: |
+          npx tsc --noEmit -p lambdas/capacity-sync/tsconfig.json
+          npx tsc --noEmit -p lambdas/location-tracker/tsconfig.json
+          npx tsc --noEmit -p lambdas/stock-tracker/tsconfig.json
+          npx tsc --noEmit -p lambdas/stock-level-resolver/tsconfig.json
 
       - name: Test
         run: npm test --workspaces --if-present
