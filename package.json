@@ -6,8 +6,8 @@
     "lambdas/*"
   ],
   "scripts": {
-    "test": "npm test --workspaces",
-    "build": "npm run build --workspaces",
+    "test": "npm test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
     "upload:resolvers": "aws s3 sync appsync/ s3://postnl-dks-case-${STACK_NAME}-artifacts/appsync/",
     "deploy": "npm run upload:resolvers && sam build && sam deploy",
     "deploy:guided": "npm run upload:resolvers && sam build && sam deploy --guided"
