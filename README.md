@@ -105,7 +105,7 @@ aws s3 mb s3://postnl-dks-case-<env-name>-artifacts --region eu-west-1
 npm run deploy:guided
 ```
 
-SAM will ask for the env name (`postnl-dks-case-dev` or `postnl-dks-case-prod`) and save your answers.
+SAM will ask for the env name (`postnl-dks-case-dev` or `postnl-dks-case-main`) and save your answers.
 
 ### After that
 
